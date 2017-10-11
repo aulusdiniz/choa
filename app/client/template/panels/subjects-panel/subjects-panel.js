@@ -23,56 +23,69 @@ Template.subjectsPanel.helpers({
 });
 Template.subjectsPanel.events({
   //====================== events for user Subjects ==========================//
-  'get-hypervideos user-subject-box': function (e, template) {
+  'get-hypervideos user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var subject = Subject.findOne({
-      _id: e.target.subject._id
+      _id: evt.subject._id
     });
+    evt.hypervideos = subject.hypervideos();
     e.target.hypervideos = subject.hypervideos();
+    console.info(subject.hypervideos());
+    console.info(evt)
   },
 
-  'watch-subject user-subject-box': function (e, template) {
-    var subject = e.target.subject;
-    var subjectId = e.target.subject._id;
+  'watch-subject user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
+    var subject = evt.subject;
+    var subjectId = evt.subject._id;
     Session.set('title', subject.name);
     Session.set('subjectId', subjectId);
     Router.go('watchSubject', {
       _id: subjectId
     });
   },
-  'edit-subject user-subject-box': function (e, template) {
-    var subject = e.target.subject;
+  'edit-subject user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
+    var subject = evt.subject;
     Session.set('title', subject.name);
     Session.set('subjectId', subject._id);
     Router.go('subjectPanel', {
       _id: subject._id
     });
   },
-  'subject-deleted user-subject-box': function (e, template) {
-    var subject = Subject.findOne(e.target.subject._id);
+  'subject-deleted user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
+    var subject = Subject.findOne(evt.subject._id);
     subject.remove();
   },
 
   //================== events for user library Subjects ======================//
-  'get-hypervideos subject-box': function (e, template) {
+  'get-hypervideos user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var subject = Subject.findOne({
-      _id: e.target.subject._id
+      _id: evt.subject._id
     });
+    evt.hypervideos = subject.hypervideos();
     e.target.hypervideos = subject.hypervideos();
+    console.info(subject.hypervideos());
+    console.info(evt)
   },
 
-  'watch-subject subject-box': function (e, template) {
-    var subject = e.target.subject;
-    var subjectId = e.target.subject._id;
+  'watch-subject user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
+    var subject = evt.subject;
+    var subjectId = evt.subject._id;
     Session.set('title', subject.name);
     Session.set('subjectId', subjectId);
     Router.go('watchSubject', {
       _id: subjectId
     });
   },
-  'remove-library-subject subject-box': function (e, template) {
+  'remove-library-subject user-library': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var librarySubject = LibrarySubject.findOne({
       userId: Meteor.userId(),
-      subjectId: e.target.subject._id
+      subjectId: evt.subject._id
     });
     librarySubject.remove();
   },
