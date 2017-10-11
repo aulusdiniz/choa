@@ -3,7 +3,8 @@
   "main": "hypervideos.js",
   "version": "0.0.0",
   "authors": [
-    "ArthurJahn <stutrzbecher@gmail.com>"
+    "ArthurJahn <stutrzbecher@gmail.com>",
+    "AulusDiniz <aulus999@gmail.com>"
   ],
   "license": "MIT",
   "ignore": [
