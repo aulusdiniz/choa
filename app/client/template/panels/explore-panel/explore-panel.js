@@ -28,15 +28,18 @@ Template.explorePanel.helpers({
 });
 
 Template.explorePanel.events({
-  'get-hypervideos subject-box': function (e, template) {
+  'get-hypervideos hyper-search': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var subject = Subject.findOne({
-      _id: e.target.subject._id
+      _id: evt.subject._id
     });
-    e.target.hypervideos = subject.hypervideos();
+    var oe = e.originalEvent.path["0"];
+    oe.hypervideos = subject.hypervideos();
   },
-  'watch-subject subject-box': function (e, template) {
+  'watch-subject hyper-search': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var subject = Subject.findOne({
-      _id: e.target.subject._id
+      _id: evt.subject._id
     });
     Session.set('title', subject.name);
     Session.set('subjectId', subject._id);
@@ -46,16 +49,18 @@ Template.explorePanel.events({
       _id: subject._id
     });
   },
-  'add-library-subject subject-box': function (e, template) {
+  'add-library-subject hyper-search': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var subject = Subject.findOne({
-      _id: e.target.subject._id
+      _id: evt.subject._id
     });
     Template.explorePanel.addLibrarySubject(subject._id);
     subject.save();
   },
-  'remove-library-subject subject-box': function (e, template) {
+  'remove-library-subject hyper-search': function (e, template) {
+    var evt = e.originalEvent.path["0"].__data__;
     var subject = Subject.findOne({
-      _id: e.target.subject._id
+      _id: evt.subject._id
     });
     var librarySubject = LibrarySubject.findOne({
       userId: Meteor.userId(),
