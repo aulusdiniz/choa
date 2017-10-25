@@ -56,6 +56,7 @@
       }
     },
     attached: function() {
+      console.info("Attached subject-preview");
       Polymer.dom.flush();
       var self = this;
       self.$.hypers.bounds = self._getGridBounds();
@@ -70,7 +71,7 @@
           var preview = new hypervideoPreview(hypervideo);
           self.$.hypers.appendGridChild(preview);
         }
-        this._drawConnections();
+        self._drawConnections();
       }
     },
     onResize: function() {
@@ -92,7 +93,7 @@
       var self = this;
       if(self.subject) {
         var canvasScale = 3;
-        var lineWidth = 4;
+        var lineWidth = 6;
         var connections = self.subject.connections;
         var canvas = self.$.canvas;
         canvas.width  = canvasScale * canvas.offsetWidth;
@@ -121,8 +122,14 @@
     },
     _findHypervideoNode: function(id) {
       var self = this;
-      return self.$.hypers.querySelector('#_'+id);
-    },
+      var ids = `#_${id}`;
+      result = self.$.hypers.querySelector(ids);
+      //the following if takes care of finding the nodes for draw connections.
+      if (result==null || result==[]){
+        result = self.$.hypers.shadowRoot.querySelector(ids);
+      }
+      return result;
+    }
   });
   </script>
 </dom-module>
