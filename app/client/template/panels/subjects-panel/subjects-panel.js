@@ -28,10 +28,8 @@ Template.subjectsPanel.events({
     var subject = Subject.findOne({
       _id: evt.subject._id
     });
-    evt.hypervideos = subject.hypervideos();
-    e.target.hypervideos = subject.hypervideos();
-    console.info(subject.hypervideos());
-    console.info(evt)
+    var oe = e.originalEvent.path["0"];
+    oe.hypervideos = subject.hypervideos();
   },
 
   'watch-subject user-library': function (e, template) {
@@ -65,10 +63,8 @@ Template.subjectsPanel.events({
     var subject = Subject.findOne({
       _id: evt.subject._id
     });
-    evt.hypervideos = subject.hypervideos();
-    e.target.hypervideos = subject.hypervideos();
-    console.info(subject.hypervideos());
-    console.info(evt)
+    var oe = e.originalEvent.path["0"];
+    oe.hypervideos = subject.hypervideos();
   },
 
   'watch-subject user-library': function (e, template) {
