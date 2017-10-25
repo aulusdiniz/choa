@@ -24,6 +24,7 @@
         "/components/subject-player/subject-player.html",
         "/components/toast-notify/toast-notify.html",
         "/components/user-library/user-library.html",
-        "/components/hyper-search/hyper-search.html"
+        "/components/hyper-search/hyper-search.html",
+        "/components/subject-preview/subject-preview.html"
     ]
 }
