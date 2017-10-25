@@ -1,12 +1,12 @@
 Subvideos = new Mongo.Collection('subvideos');
 
 VidStore = new FS.Store.GridFS('medias', {
-  path: '~/Documents/git/hypervideos/uploads/medias'
+  path: '~/git/tcc/hypervideos/uploads/medias'
 });
 Videos = new FS.Collection('videos', {
   stores: [VidStore],
   filter: {
-    maxSize: 100000000, // 100 MB
+    maxSize: 200000000, // 200 MB
     onInvalid: function (msg) {
       document.querySelector('#notify').message = msg;
     }
