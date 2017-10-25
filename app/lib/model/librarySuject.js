@@ -40,7 +40,7 @@ LibrarySubject = Astro.Class({
     // get all hypervideos that the
     // user has already visited
     visitedHypervideos: function () {
-      return VisitedHypervideo.fund({
+      return VisitedHypervideo.find({
         librarySubjectId: this._id
       }).fetch();
     },
@@ -66,6 +66,6 @@ LibrarySubject = Astro.Class({
 
 // server side methods defined
 // by user library subjects
-Meteor.methods({
-
-});
+// Meteor.methods({
+//
+// });
