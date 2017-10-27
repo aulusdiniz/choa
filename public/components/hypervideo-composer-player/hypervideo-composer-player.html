@@ -1,0 +1,456 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+
+<link rel="import" href="../../components/subvideo-composer/subvideo-composer.html">
+<link rel="import" href="../../components/subvideo-composer/upload-item.html">
+<link rel="import" href="../../components/question-composer/question-composer.html">
+<link rel="import" href="../../components/subvideo-node/subvideo-node.html">
+<link rel="import" href="../../components/question-node/question-node.html">
+<link rel="import" href="../../components/connection-node/connection-node.html">
+
+<dom-module id="hypervideo-composer-player">
+  <style is="custom-style">
+    #backcanvas {
+      position: absolute;
+      top: 75px;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+    }
+    #backcanvas canvas{
+      width: 100%;
+      height: 100%;
+      background-color:rgba(246,246,246,1);/*var(--light-divider-color);*/
+    }
+    .options {
+      position: relative;
+      width: 100%;
+    }
+    #hypervideoName {
+      width: 50%;
+      margin-left: 15%;
+      float: left;
+    }
+    .box {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .box .row.content {
+      flex: 1 .01 auto;
+    }
+    .box .row.footer {
+      flex: 0 1 auto;
+      min-height: 80px;
+      overflow: hidden;
+    }
+    #fileInputArea {
+      color: transparent;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color:rgba(220,220,220,0);/*var(--light-divider-color);*/
+      overflow: hidden;
+    }
+    #inputfile{
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+    #hint-text {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      right: 10px;
+      bottom: 10px;
+      background-color:rgba(220,220,220,0.2);/*var(--light-divider-color);*/
+      color: rgba(200,200,200,1);/*var(--light-divider-color);*/
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 0;
+    }
+    #hint-text span {
+      position: absolute;
+      width: 200px;
+      left: 50%;
+      top: 50%;
+      margin:-20px 0 0 -100px;
+    }
+    .left {
+      float: left;
+      margin: 0;
+    }
+    .toggleDrawer {
+      margin: 5px 0 0 10px;
+      width: 75px;
+      font-size: 11px;
+      height: 30px;
+      line-height: 15px;
+    }
+  </style>
+  <template>
+    <paper-drawer-panel id=videoDrawer drawer-width="50%">
+      <div drawer>
+        <div class="box">
+          <div class="row content">
+            <!-- Here will be displayed uploaded videos -->
+            <template id="files" is="dom-repeat" items="{{fileObjects}}" as="videoFile">
+              <upload-item file="{{videoFile}}" on-upload-complete="handleUploadComplete"></upload-item>
+            </template>
+            <template id="subvideos" is="dom-repeat" items="{{subvideoNodes}}" as="subvideoNode">
+              <subvideo-composer subvideo="{{subvideoNode.subvideo}}"></subvideo-composer>
+            </template>
+          </div>
+          <div id="fileInputArea"
+            class="row footer">
+            <input id="inputfile"
+              type="file" multiple
+              accept="video/*"
+              on-change="loadFiles">
+            </input>
+            <div id="hint-text">
+              <span>
+                Clique para fazer upload de vídeos
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div main>
+        <paper-drawer-panel id=questionDrawer drawer-width="50%">
+          <div drawer>
+            <div class="box">
+              <div class="row content">
+                <!-- Here will be displayed uploaded videos -->
+                <template id="questions" is="dom-repeat" items="{{questionNodes}}" as="questionNode">
+                  <question-composer question="{{questionNode.question}}"></question-composer>
+                </template>
+              </div>
+              <div id="fileInputArea"
+                class="row footer"
+                on-tap="createQuestion">
+                <div id="hint-text">
+                  <span>
+                    Clique para adicionar questões
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div main>
+            <div class="options">
+              <ul class="list-inline left">
+                <li>
+                  <paper-button class="toggleDrawer"
+                  on-tap="toggleVideoDrawer">Videos</paper-button>
+                </li>
+                <li>
+                  <paper-button class="toggleDrawer"
+                  on-tap="toggleQuestionDrawer">Questões</paper-button>
+                </li>
+              </ul>
+              <paper-input id="hypervideoName"
+                name="name"
+                label="Nome do Hypervideo"
+                value="{{hypervideo.name}}"
+                on-change="updateHypervideo">
+              </paper-input>
+            </div>
+            <div id="backcanvas">
+              <video></video>
+              <canvas id="canvas"></canvas>
+            </div>
+            <div id="nodesFrame">
+              <!-- this is where subvideos will be displayed -->
+            </div>
+            <div id="conns">
+              <!-- this is where connections will be displayed -->
+            </div>
+          </div>
+        </paper-drawer-panel>
+      </div>
+    </paper-drawer-panel>
+  </template>
+  <script>
+    Polymer({
+//============================= Polymer Methods ==============================//
+      is: 'hypervideo-composer-player',
+      properties: {
+        fileObjects: {
+          type: Array,
+          value: function() {
+              return [];
+          }
+        },
+        filesProgress: {
+          type: Array,
+          value: function() {
+              return [];
+          }
+        },
+
+        subvideoNodes: {
+          type: Array,
+          value: function() {
+              return [];
+          }
+        },
+
+        questionNodes: {
+          type: Array,
+          value: function() {
+              return [];
+          }
+        },
+        hypervideo: {
+          type: Object,
+          value: null,
+        },
+        // if any node is being dragged, this
+        // property handles the redraw of connections
+        dragging: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          observer: "draggingChanged"
+        },
+        connectId: {
+          type: String,
+          value: null,
+          notify: true,
+          observer: "connectIdChanged"
+        },
+        name: {
+          type: String,
+          notify: true
+        }
+      },
+      ready: function() {
+        this.firstTouch = true;
+        this.$.videoDrawer.forceNarrow = true;
+        this.$.videoDrawer.openDrawer();
+        this.$.questionDrawer.forceNarrow = true;
+        this.$.questionDrawer.closeDrawer();
+      },
+//============================= Public Methods ===============================//
+      handleUploadComplete: function(e) {
+        var self = this;
+        var file = e.target.file;
+        self._createSubvideo(file);
+        var index = self.fileObjects.indexOf(file);
+        this.splice('fileObjects', index, 1);
+      },
+      toggleVideoDrawer: function() {
+        this.$.videoDrawer.togglePanel();
+      },
+      toggleQuestionDrawer: function() {
+        this.$.questionDrawer.togglePanel();
+      },
+      loadFiles: function(e) {
+        this.files = e.target.files;
+        this.fire('upload-videos');
+      },
+      createQuestion: function() {
+
+      },
+      connectIdChanged: function (newConnectId) {
+        var nodes = 'subvideo-node, connection-node, question-node';
+        var list = Polymer.dom(this).querySelectorAll(nodes);
+        var length = list.length;
+        for(var i=0; i<length; i++) {
+          var element = list[i];
+          element.connectId = newConnectId;
+        }
+      },
+      draggingChanged: function (newDragging) {
+        var self = this;
+        if(self.dragging) {
+          self._drawInterval = setInterval(function() {
+            self._drawConnections();
+          }, 40);
+        } else {
+          clearInterval(self._drawInterval);
+        }
+      },
+      updateHypervideo: function(e) {
+        this.hypervideo.name = e.target.value;
+        this.fire('name-changed');
+      },
+//============================= Private Methods ==============================//
+      _createSubvideo: function(file) {
+        var self = this;
+        var xOffset = 35; // depends on initial definition in toucharea css
+        var yOffset = 100;// depends on initial definition in toucharea css
+        // defines bounds and offset of dragging limits for a hypervideoNode
+        var rect = self.$.backcanvas.getBoundingClientRect();
+        var bounds = {
+          width: rect.right - rect.left,
+          height: rect.bottom - rect.top,
+          x: rect.left-xOffset,
+          y: rect.top-yOffset
+        };
+
+        var pos = self._nextNodePos();
+        var options = {
+          x : pos.x,
+          y : pos.y,
+          bounds: bounds,
+          mediaId: file._id,
+          name: file.data.blob.name,
+          connectId: self.connectId,
+          hypervideoId: self.hypervideo._id,
+        }
+        var subvideoNode = new SubvideoNode(options);
+        self._addNodeListeners(subvideoNode);
+        Polymer.dom(self.$.nodesFrame).appendChild(subvideoNode);
+        var subvideosList = Polymer.dom(self.$.nodesFrame).querySelectorAll('subvideo-node');
+        self.subvideoNodes = Array.prototype.slice.call(subvideosList);
+
+        pos = self._nextNodePos();
+        options.x = pos.x;
+        options.y = pos.y;
+        var questionNode = new QuestionNode(options);
+        self._addNodeListeners(questionNode);
+        Polymer.dom(self.$.nodesFrame).appendChild(questionNode);
+        var questionsList = Polymer.dom(self.$.nodesFrame).querySelectorAll('question-node');
+        self.questionNodes = Array.prototype.slice.call(questionsList);
+      },
+      _nodesCount: function() {
+        var list = Polymer.dom(this).querySelectorAll('subvideo-node, question-node');
+        return list.length;
+      },
+      _nextNodePos: function() {
+        var self = this;
+        var i = self._nodesCount();
+        var pos = {
+          x: 300 + i * 70,
+          y: 110 + i * 20
+        };
+        return pos;
+      },
+      _connect: function(firstId, secondId) {
+        var self = this;
+        if(firstId !== secondId) {
+          this._connection = {first: firstId, second: secondId};
+          this.fire('video-connection-created');
+          if(this._connection){
+            var connNode = new ConnectionNode(this._connection);
+            connNode.addEventListener('detached', function(ev){
+              self._connectionListener(this);
+            });
+            Polymer.dom(self.$.conns).appendChild(connNode);
+            self._resetConnecting();
+          }
+          self._resetConnecting();
+        }
+        self._drawConnections();
+      },
+      _drawConnections: function() {
+        var xOffset = 10; // depends on initial definition in toucharea css
+        var yOffset = 75;// depends on initial definition in toucharea css
+        var self = this;
+        var canvasScale = 3;
+        var lineWidth = 4;
+        var connections = Polymer.dom(self.$.conns).querySelectorAll('connection-node');
+        var canvas = self.$.canvas;
+        canvas.width  = canvasScale * canvas.offsetWidth;
+        canvas.height = canvasScale * canvas.offsetHeight;
+        var ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        for(var i=0; i< connections.length; i++) {
+          var conn = connections[i].connection;
+          //FIX ME find a better way to do it...
+          var first = self._findNode(conn.first);
+          var second = self._findNode(conn.second);
+          if(first && second) {
+            var firstPos = first.getPos();
+            var secondPos = second.getPos();
+            var x1 = canvasScale * (firstPos.x - xOffset);
+            var y1 = canvasScale * (firstPos.y - yOffset);
+            var x2 = canvasScale * (secondPos.x - xOffset);
+            var y2 = canvasScale * (secondPos.y - yOffset);
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            self._showConnection(conn, firstPos, secondPos);
+          }
+        }
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      },
+      _findNode: function(id) {
+        var self = this;
+        return Polymer.dom(self.$.nodesFrame).querySelector('#_'+id);
+      },
+      _resetConnecting: function(){
+        var self = this;
+        self.connectId = null;
+        self._firstId = null;
+      },
+      //subvideo listener functions
+      _connectListener: function(snInstance) {
+        var self = this;
+        self.connectId = snInstance.connectId;
+        if(self.connectId) {
+          if(!self._firstId) {
+            self._firstId = self.connectId;
+          } else {
+            self._connect(self._firstId, self.connectId);
+          }
+        } else {
+          self._firstId = self.connectId;
+        }
+      },
+      _draggingListener: function(snInstance) {
+        var self = this;
+        self.dragging = snInstance.dragging;
+      },
+      _deletingListener: function() {
+        var self = this;
+
+        var subvideosList = Polymer.dom(self.$.nodesFrame).querySelectorAll('subvideo-node');
+        self.subvideoNodes = Array.prototype.slice.call(subvideosList);
+
+        var questionsList = Polymer.dom(self.$.nodesFrame).querySelectorAll('question-node');
+        self.questionNodes = Array.prototype.slice.call(questionsList);
+      },
+      _addNodeListeners: function(node) {
+        var self = this;
+        node.addEventListener('connect-id-changed', function(ev){
+          self._connectListener(this);
+        });
+        node.addEventListener('dragging-changed', function(ev){
+          self._draggingListener(this);
+        });
+        node.addEventListener('node-removed', function(ev){
+          self._deletingListener();
+        });
+      },
+      //connection Listener functions
+      _connectionListener: function(connInstance) {
+        var self = this;
+        this._connection = connInstance.connection;
+        this.fire('video-connection-removed');
+        self._drawConnections();
+      },
+      _showConnection: function(connection, firstPos, secondPos) {
+        var self = this;
+        var xmid = (firstPos.x + secondPos.x)/2;
+        var ymid = (firstPos.y + secondPos.y)/2;
+        var list = Polymer.dom(self).querySelectorAll('connection-node');
+        for(var i=0; i<list.length; i++) {
+          var connNode = list[i];
+          if(connNode.connection === connection) {
+            connNode.setPos(xmid, ymid);
+            return;
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

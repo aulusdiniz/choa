@@ -7,21 +7,41 @@
     }
     #icon {
       position: absolute;
-      padding: 18px 17px;
-      line-height: 10px;
+      padding: 10px 10px;
+      line-height: 0px;
       border-radius: 50%;
       background-color:#DCDCDC;/*var(--light-divider-color);*/
       color: #212121;/*var(--light-divider-color);*/
       text-align: center;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: normal;
       cursor: pointer;
+    }
+    #preview {
+      position: absolute;
+      width: 0px;
+      height: 0px;
+      left:1px;
+      top:0px;
+      border-radius: 30px;
+      background-color:#DCDCDC;/*var(--light-divider-color);*/
+      color: #212121;/*var(--light-divider-color);*/
+      padding: 15px 0px;
+      text-align: center;
+      font-size: 16px;
+      opacity: 0;
+      z-index: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      transition:all .2s ease;
     }
   </style>
   <template>
     <div id="wrapper">
-      <div id="icon" on-tap="showPos">
-        H
+      <div id="icon" on-tap="showPos">H
+          <div id="preview">{{hypervideo.name}}</div>
       </div>
     </div>
   </template>
@@ -44,6 +64,7 @@
       this._row = this.hypervideo.row;
       this.moveToPos();
       this.id = "_"+this.hypervideo._id;
+      this._togglePreview();
     },
     moveToPos: function() {
       this.$.wrapper.style.left = this._x - this._w/2+"px";
@@ -55,6 +76,21 @@
         y: this._y,
       };
     },
+    _togglePreview: function() {
+      if(this.connectId){
+        this.$.preview.style.opacity = "0";
+        this.$.preview.style.width = "0";
+        return;
+      }
+      if(this.$.preview.style.opacity !== "1") {
+        this.$.preview.style.opacity = "1";
+        this.$.preview.style.width = "200px";
+      }
+      else {
+        this.$.preview.style.opacity = "0";
+        this.$.preview.style.width = "0";
+      }
+    }
   });
   </script>
 </dom-module>

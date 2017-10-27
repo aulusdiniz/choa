@@ -15,7 +15,7 @@
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <!-- Custom implemented components -->
-<link rel="import" href="../../components/hypervideo-composer-area/hypervideo-composer-area.html">
+<link rel="import" href="../../components/hypervideo-composer-player/hypervideo-composer-player.html">
 
 <dom-module id="hypervideo-node">
   <style is="custom-style">
@@ -156,8 +156,8 @@
       entry-animation="scale-up-animation"
       exit-animation="scale-down-animation"
       with-backdrop modal>
-      <hypervideo-composer-area id="hypervideocomposer" on-name-changed="_updateName">
-      </hypervideo-composer-area>
+      <hypervideo-composer-player id="hypervideocomposer" on-name-changed="_updateName">
+      </hypervideo-composer-player>
       <paper-icon-button id="closeButton"
       dialog-confirm autofocus icon="close"></paper-icon-button>
     </paper-dialog>
@@ -243,6 +243,7 @@
           this.hypervideoChanged();
         }
         this.moveToPos();
+        this._togglePreview();
       },
 //============================= Public Methods ===============================//
       handleConnectId: function() {
