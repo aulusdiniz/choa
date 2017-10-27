@@ -44,19 +44,21 @@ Template.watchSubject.events({
     Template.watchSubject.addQuestion(hypervideo._id, questionId, answer);
   },
 
-  'get-subvideos hyper-player': function (e, template) {
+  'get-subvideos subject-player': function (e, template) {
     var hypervideo = Hypervideo.findOne({
       _id: e.target.hypervideo._id
     });
     e.target.subvideos = hypervideo.subvideos();
   },
-  'get-questions hyper-player': function (e, template) {
+  'get-questions subject-player': function (e, template) {
     var hypervideo = Hypervideo.findOne({
       _id: e.target.hypervideo._id
     });
     e.target.questions = hypervideo.questions();
   },
-  'get-source-subvideo hyper-player': function (e, template) {
+  'get-source-subvideo subject-player': function (e, template) {
+    console.info(e);
+    console.info(' <- event passed to get-source-subvideo subject-player');
     var hypervideo = Hypervideo.findOne({
       _id: e.target.hypervideo._id
     });
@@ -67,14 +69,16 @@ Template.watchSubject.events({
     Template.watchSubject.visitSubvideo(hypervideo._id, subvideo._id);
   },
 
-  'visit-subvideo hyper-player': function (e, template) {
+  'visit-subvideo subject-player': function (e, template) {
     var hypervideo = Hypervideo.findOne({
       _id: e.target.hypervideo._id
     });
+    console.info(e); console.info('<- visit-subvideo subject-player')
     Template.watchSubject.visitSubvideo(hypervideo._id, e.target.subvideo._id);
   },
 
-  'get-url subvideo-preview': function (e, template) {
+  'get-url subject-player': function (e, template) {
+    console.info('get-url subvideo-preview <- called');
     var subvideo = Subvideo.findOne({_id:e.target.subvideo._id});
     e.target.url = subvideo.media().url();
   },

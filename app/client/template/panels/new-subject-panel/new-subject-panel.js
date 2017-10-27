@@ -121,6 +121,7 @@ Template.newSubjectPanel.events({
     }
   },
   'upload-videos subject-composer-area': function (e, template) {
+    console.info('calling upload-videos subject-composer-area <-');
     var composer = e.originalEvent.path[0];
     Array.from(composer.files).forEach(function (file) {
       var tmpfile = new FS.File(file);

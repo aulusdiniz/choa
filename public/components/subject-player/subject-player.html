@@ -138,6 +138,7 @@
         }
       },
       watchSubvideo: function (e) {
+        console.info(e);
         if(this.url !== e.detail.url) {
           this.url = e.detail.url;
           this.subvideo = e.detail.subvideo;
