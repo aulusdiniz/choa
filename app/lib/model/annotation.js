@@ -5,19 +5,31 @@ Annotation = Astro.Class({
   collection: Annotations,
   fields: {
     time:{
-      start: {
+      start:{
         type: 'number',
         validator: Validators.required()
       },
       end: 'number'
     },
-    annotationType:{
+    type:{
       type: 'string',
       validator: Validators.required()
     },
     hypervideoId:{
       type: 'string',
       validator: Validators.required()
+    },
+    source:{
+      type: 'string',
+      validator: Validators.required()
+    },
+    playSrc:{
+      From:{
+        type: 'string'
+      },
+      To:{
+        type: 'string'
+      },
     }
   }
 });
