@@ -72,6 +72,15 @@ Meteor.publishComposite('fullSubject', function (subjectId) {
             transform: null
           });
         }
+      },
+      {
+        find: function (hypervideo, subject) {
+          return Annotation.find({
+            hypervideoId: hypervideo._id
+          }, {
+            transform: null
+          });
+        }
       }, ]
     }]
   };

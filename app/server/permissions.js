@@ -60,3 +60,5 @@ Videos.allow(mediaPermissions);
 
 LibrarySubjects.allow(userPermissions);
 VisitedHypervideos.allow(userPermissions);
+
+Annotations.allow(userPermissions);

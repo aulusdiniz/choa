@@ -65,6 +65,12 @@ Template.newSubjectPanel.events({
     });
     e.target.hypervideos = subject.hypervideos();
   },
+  'get-annotations subject-composer-area': function (e, template) {
+    var hypervideo = Hypervideo.findOne({
+      _id: e.target.hypervideo._id
+    });
+    e.target.annotations = hypervideo.annotations();
+  },
   'connection-created subject-composer-area': function (e, template) {
     var id = e.target.subject._id;
     var subject = Subject.findOne({
@@ -87,6 +93,20 @@ Template.newSubjectPanel.events({
     e.target.subject.connections = subject.connections;
   },
   // ======================= Hypervideo Controll Events ======================//
+  'annotation-created subject-composer-area' : function (e, template){
+    console.info("annotation-created subject-composer-area");
+    console.info(e.originalEvent.path[0]);
+    var evt = e.originalEvent.path[0]
+    var annotation = new Annotation({
+      name: evt.name,
+      type: evt.type,
+      hypervideoId: evt.hypervideoId,
+      owner: Meteor.userId()
+    })
+    annotation.save();
+    evt.annotation = annotation.get();
+    Template.mainMenu.showValidationErrors(annotation);
+  },
   'hypervideo-created subject-composer-area': function (e, template) {
     var hypervideoNode = e.originalEvent.path[0];
     var col = hypervideoNode._col,

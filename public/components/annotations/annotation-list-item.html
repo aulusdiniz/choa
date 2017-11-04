@@ -1,0 +1,135 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="annotation-tile">
+  <style media="screen">
+    #wrapper {
+      position: relative;
+      height: auto;
+      color: #12AE28;
+      width: 92%;
+      padding: 5px 10px 0 10px;
+    }
+    .title-bar .left {
+      width: 70%;
+      float: left;
+    }
+    .title-bar .right {
+      width: 30%;
+      float: right;
+    }
+    p {
+      margin: 0px;
+      padding: 10px 5px 0 0;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #toggle {
+      width: 100%;
+      height: 0;
+      overflow: hidden;
+
+      -webkit-transition:all .2s ease;
+      -moz-transition:all .2s ease;
+      -ms-transition:all .2s ease;
+      -o-transition:all .2s ease;
+      transition:all .2s ease;
+    }
+    paper-slider.green {
+      --paper-slider-knob-color: #12AE28;
+      --paper-slider-active-color: #12AE28;
+      --paper-slider-pin-color: #12AE28;
+    }
+  </style>
+  <template>
+    <p>{{annotation.name}}</p>
+  </template>
+  <script>
+    AnnotationTile = Polymer({
+      is: 'annotation-tile',
+      properties: {
+        annotation: {
+          type: Object,
+          observer: "annotationChanged",
+          notify: true
+        },
+        type:{
+          type: String,
+        },
+        name: {
+          type: String,
+          notify: true,
+          value: "Annotation no name",
+        },
+        hypervideoId:{
+          type: String,
+        },
+      },
+      attached: function() {
+        var self = this;
+        self.annotationChanged();
+        this.fire('annotation-created');
+      },
+      factoryImpl: function(options) {
+        var self = this;
+        if(options.hypervideoId) {
+          this.hypervideoId = options.hypervideoId;
+          this.type = options.type;
+          this.name = options.name;
+          this.annotation = {
+            type: self.type,
+            name: self.name,
+            hypervideoId: self.hypervideoId,
+          };
+        }
+      },
+      toggleDetails: function() {
+        var margin = 15;
+        var height = this.$.toggle.scrollHeight + margin;
+        if(this.opened) {
+          this.$.toggle.style.height = "0";
+        }
+        else {
+          this.$.toggle.style.height = height+"px";
+        }
+        this.opened = !this.opened;
+      },
+      updateAnnotationName: function(e) {
+        var input = e.target;
+        this.name = input.value;
+        this.annotation.name = this.name;
+        this.fire('annotation-changed');
+      },
+      updateAnnotationDescription: function(e) {
+        var input = e.target;
+        this.annotation.description = input.value;
+        this.fire('annotation-changed');
+      },
+      visibilityChanged: function(e) {
+        var input = e.target;
+        this.annotation.visibility = input.value;
+        this.fire('annotation-changed');
+      },
+      annotationDeleted: function () {
+        this.fire('annotation-deleted');
+      },
+      annotationChanged: function() {
+        var self = this;
+        if(self.annotation) {
+          self.name = self.annotation.name;
+        }
+        else {
+          this.remove();
+        }
+      },
+    });
+  </script>
+</dom-module>

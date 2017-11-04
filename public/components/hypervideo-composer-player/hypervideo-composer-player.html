@@ -6,13 +6,8 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 
-<link rel="import" href="../../components/subvideo-composer/subvideo-composer.html">
-<link rel="import" href="../../components/subvideo-composer/upload-item.html">
-<link rel="import" href="../../components/question-composer/question-composer.html">
-<link rel="import" href="../../components/subvideo-node/subvideo-node.html">
-<link rel="import" href="../../components/question-node/question-node.html">
-<link rel="import" href="../../components/connection-node/connection-node.html">
-
+<link rel="import" href="../../components/annotations/new-video/new-video-form.html">
+<link rel="import" href="../../components/annotations/annotation-list-item.html">
 
 <dom-module id="hypervideo-composer-player">
   <style is="custom-style">
@@ -122,228 +117,200 @@
     }
   </style>
   <template>
-  <paper-drawer-panel id="annotationDrawer" drawer-width="75%" class="overlap">
-      <div drawer>
-        <div class="box">
-          <div class="row content">
-            <!-- Here will be displayed hipervideo annotations available -->
-            <ul class="list-inline panel-left">
+    <paper-drawer-panel id="annotationDrawer" drawer-width="75%" class="overlap">
+        <div drawer>
+          <div class="box">
+            <div class="row content">
+              <!-- Here will be displayed hipervideo annotations available -->
+              <ul class="list-inline panel-left">
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="new-video"
+                  >
+                  Adicionar um trecho de video ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="overlap-video"
+                  >
+                  Adicionar um trecho de video em quadro sobre pondo ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="overlap-image"
+                  >
+                  Adicionar uma imagem ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="text-label"
+                  >
+                  Adicionar Texto sobre ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="chapter-index"
+                  >
+                  Adicionar indice de capítulos ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="quick-poll"
+                  >
+                  Adicionar enquete ou pergunta ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="link-video"
+                  >
+                  Adicionar link ao hipervideo
+                  </paper-button>
+                </li>
+                <li>
+                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <paper-button class="toggleDrawer"
+                  on-tap="_createAnnotation"
+                  annotation-type="subtitle-video"
+                  >
+                  Adicionar legenda ao hipervideo
+                  </paper-button>
+                </li>
+              </ul>
+            </div>
+            <div id="fileInputArea" class="row footer">
+              <input id="inputfile" type="file" multiple accept="video/*" on-change=""></input>
+              <div id="hint-text">
+                <span>
+                  <iron-icon icon="editor:mode-comment"></iron-icon>
+                  Vamos lá, adicione uma anotação ao seu hipervideo!
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- here start the panel header -->
+        <div main>
+          <span class="options">
+            <ul class="list-inline left">
               <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                <iron-icon class="annotation-list-icon"
+                icon="icons:class"></iron-icon>
                 <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar um trecho de video ao hipervideo
-                </paper-button>
+                on-tap="toggleAnnotationDrawer">
+                Criar anotação</paper-button>
               </li>
               <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                <iron-icon class="annotation-list-icon"
+                icon="icons:description"></iron-icon>
                 <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar um trecho de video em quadro sobre pondo ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar uma imagem ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar Texto sobre ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar indice de capítulos ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar enquete ou pergunta ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar link ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar legenda ao hipervideo
-                </paper-button>
+                on-tap="toggleAnnotationListDrawer">
+                Anotações do Hipervideo</paper-button>
               </li>
             </ul>
-            <template id="files" is="dom-repeat" items="{{fileObjects}}" as="videoFile">
-              <upload-item file="{{videoFile}}" on-upload-complete="handleUploadComplete"></upload-item>
-            </template>
-            <template id="subvideos" is="dom-repeat" items="{{subvideoNodes}}" as="subvideoNode">
-              <subvideo-composer subvideo="{{subvideoNode.subvideo}}"></subvideo-composer>
-            </template>
+            <paper-input id="hypervideoName"
+              name="name"
+              label="Nome do Hypervideo"
+              value="{{hypervideo.name}}"
+              on-change="updateHypervideo">
+            </paper-input>
+          </span>
+          <!-- here start the video player content -->
+          <div id="videoFrame">
+            <video id="video" controls autoplay name="media">
+              <source src="none" type="video/mp4">
+            </video>
           </div>
-          <div id="fileInputArea" class="row footer">
-            <input id="inputfile" type="file" multiple accept="video/*" on-change="loadFiles"></input>
-            <div id="hint-text">
-              <span>
-                <iron-icon icon="editor:mode-comment"></iron-icon>
-                Vamos lá, adicione uma anotação ao seu hipervideo!
-              </span>
+          <div id="annotationOverlapFrame">
+            <!-- this is where annotations will be displayed -->
+          </div>
+        </div>
+
+        <div main>
+          <paper-drawer-panel id="annotationDetailDrawer" drawer-width="75%" class="overlap">
+            <div drawer>
+              <div class="box">
+                <div class="row content">
+                  <!-- Here will be displayed annotation details -->
+                  <!-- Change this template question-composer for adapt to the annotation details. -->
+                  <new-video-form></new-video-form>
+                </div>
+                <div id="fileInputArea"
+                  class="row footer"
+                  on-tap="createQuestion">
+                  <div id="hint-text">
+                    <span>
+                      <iron-icon icon="editor:mode-comment"></iron-icon>
+                      Edite as propriedades da sua anotação
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- here start the panel header -->
-      <div main>
-        <span class="options">
-          <ul class="list-inline left">
-            <li>
-              <iron-icon class="annotation-list-icon"
-              icon="icons:class"></iron-icon>
-              <paper-button class="toggleDrawer"
-              on-tap="toggleAnnotationDrawer">
-              Criar anotação</paper-button>
-            </li>
-            <li>
-              <iron-icon class="annotation-list-icon"
-              icon="icons:description"></iron-icon>
-              <paper-button class="toggleDrawer"
-              on-tap="toggleAnnotationListDrawer">
-              Anotações do Hipervideo</paper-button>
-            </li>
-          </ul>
-          <paper-input id="hypervideoName"
-            name="name"
-            label="Nome do Hypervideo"
-            value="{{hypervideo.name}}"
-            on-change="updateHypervideo">
-          </paper-input>
-        </span>
-        <!-- here start the video player content -->
-        <div id="videoFrame">
-          <video id="video" controls autoplay name="media">
-            <source src="none" type="video/mp4">
-          </video>
-        </div>
-        <div id="annotationOverlapFrame">
-          <!-- this is where annotations will be displayed -->
-        </div>
-      </div>
-
-      <div main>
-    <paper-drawer-panel id="annotationDetailDrawer" selected={{selected}} drawer-width="75%" class="overlap">
-      <div drawer>
-        <div class="box">
-          <div class="row content">
-            <!-- Here will be displayed annotation details -->
-            <!-- Change this template question-composer for adapt to the annotation details. -->
-            <template  is="dom-if" if="{{selected=='new-video'}}">
-              <new-video-form question="{{questionNode.question}}"></new-video-form>
-            </template>
-            <template  is="dom-if" if="{{selected=='new-video'}}">
-              <template id="questions" is="dom-repeat" items="{{questionNodes}}" as="questionNode">
-                <new-video-form question="{{questionNode.question}}"></new-video-form>
-              </template>
-            </template>
-          </div>
-          <div id="fileInputArea"
-            class="row footer"
-            on-tap="createQuestion">
-            <div id="hint-text">
-              <span>
-                <iron-icon icon="editor:mode-comment"></iron-icon>
-                Edite as propriedades da sua anotação
-              </span>
+          <div main>
+            <paper-drawer-panel id="annotationListDrawer" drawer-width="75%" class="overlap">
+              <div drawer>
+                <div class="box">
+                  <div class="row content">
+                    <!-- Here will be displayed annotation details -->
+                    <!-- Change this template question-composer for adapt to the annotation details. -->
+                    <ul class="list-inline panel-left">
+                      <template id="annotationList" is="dom-repeat" items="{{annotationNodes}}" as="AnnotationTile">
+                        <li>
+                          <iron-icon class="annotation-list-icon" icon="icons:turned-in"></iron-icon>
+                          <paper-button class="toggleDrawer"
+                          on-tap="toggleAnnotationDetailDrawer">
+                          <annotation-tile></annotation-tile>
+                          </paper-button>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                  <div id="fileInputArea"
+                    class="row footer"
+                    on-tap="">
+                    <div id="hint-text">
+                      <span>
+                        <iron-icon icon="editor:mode-comment"></iron-icon>
+                        Selecione uma anotação para editar as propriedades
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div main>
-    <paper-drawer-panel id="annotationListDrawer" drawer-width="75%" class="overlap">
-      <div drawer>
-        <div class="box">
-          <div class="row content">
-            <!-- Here will be displayed annotation details -->
-            <!-- Change this template question-composer for adapt to the annotation details. -->
-            <ul class="list-inline panel-left">
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:turned-in"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="toggleAnnotationDetailDrawer">
-                Anotação #1
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:turned-in"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="toggleAnnotationDetailDrawer">
-                Anotação #2
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:turned-in"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="toggleAnnotationDetailDrawer">
-                Anotação #3
-                </paper-button>
-              </li>
-            </ul>
-            <template id="questions" is="dom-repeat" items="{{questionNodes}}" as="questionNode">
-              <question-composer question="{{questionNode.question}}"></question-composer>
-            </template>
-          </div>
-          <div id="fileInputArea"
-            class="row footer"
-            on-tap="createQuestion">
-            <div id="hint-text">
-              <span>
-                <iron-icon icon="editor:mode-comment"></iron-icon>
-                Selecione uma anotação para editar as propriedades
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </paper-drawer-panel>
-  </paper-drawer-panel>
-</paper-drawer-panel>
-  </template>
+          </paper-drawer-panel>
+        </paper-drawer-panel>
+      </paper-drawer-panel>
+    </template>
   <script>
     Polymer({
 //============================= Polymer Methods ==============================//
       is: 'hypervideo-composer-player',
       properties: {
-        annotations:{
+        annotationNodes:{
           type: Array,
           value: function() {
               return [];
@@ -359,7 +326,7 @@
         name: {
           type: String,
           notify: true
-        }
+        },
       },
       ready: function() {
         this.firstTouch = true;
@@ -371,13 +338,6 @@
         this.$.annotationDetailDrawer.closeDrawer();
       },
 //============================= Public Methods ===============================//
-      handleUploadComplete: function(e) {
-        var self = this;
-        var file = e.target.file;
-        self._createSubvideo(file);
-        var index = self.fileObjects.indexOf(file);
-        this.splice('fileObjects', index, 1);
-      },
       toggleAnnotationDrawer: function() {
         this.$.annotationDrawer.togglePanel();
         this.$.annotationDetailDrawer.closeDrawer();
@@ -392,6 +352,7 @@
         this.$.annotationListDrawer.togglePanel();
         this.$.annotationDetailDrawer.closeDrawer();
         this.$.annotationDrawer.closeDrawer();
+        this._getAnnotations();
       },
       loadFiles: function(e) {
         this.files = e.target.files;
@@ -403,34 +364,32 @@
         this.fire('name-changed');
       },
       createAnnotation(e){
-        var self = this;
-        this.toggleAnnotationDetailDrawer();
-        var annotationType = Polymer.dom(e).rootTarget.getAttribute('annotation-type');
-        this.selected = annotationType;
-
-        // console.info(e);
-        // var file = e.target.files;
-        // // this.fire('upload-videos');
-        //
-        // var options = {
-        //   mediaId: file._id,
-        //   name: file.data.blob.name,
-        //   connectId: self.connectId,
-        //   hypervideoId: self.hypervideo._id,
-        //   annotationType: Polymer.dom(e).rootTarget.getAttribute('annotation-type'),
-        // }
-        //
-        // var annotation = new Annotation(options);
-        //
-        // console.info(options);
-        // console.info(annotation);
 
       },
       //============================= Private Methods ==============================//
       _createAnnotation: function(e) {
         //create annotation on html
+        var self = this;
+        this.toggleAnnotationDetailDrawer();
+        var annotationType = Polymer.dom(e).rootTarget.getAttribute('annotation-type');
+        console.info(self);
+        var options = {
+          type: annotationType,
+          hypervideoId: self.hypervideo._id,
+          name: "Anotação sem nome",
+        }
 
+        var annotationTile = new AnnotationTile(options);
+        Polymer.dom(self.$.annotationList).appendChild(annotationTile);
+        var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
+        console.info(Polymer.dom(self.$.annotationList));
+        self.annotationNodes = Array.prototype.slice.call(annotationList);
+      },
+      _getAnnotations: function(e){
+        this.fire('get-annotations');
+        console.info(e);
       }
+
     });
   </script>
 </dom-module>
