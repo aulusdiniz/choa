@@ -1,13 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="annotation">
+<dom-module id="annotation-data">
   <style media="screen">
   </style>
   <template>
   </template>
   <script>
-    Annotation = Polymer({
-      is: 'annotation',
+    AnnotationData = Polymer({
+      is: 'annotation-data',
       properties: {
         annotation: {
           type: Object,
@@ -29,7 +29,6 @@
       attached: function() {
         var self = this;
         self.annotationChanged();
-        this.fire('annotation-created');
       },
       factoryImpl: function(options) {
         var self = this;

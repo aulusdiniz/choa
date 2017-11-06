@@ -98,14 +98,14 @@ Template.newSubjectPanel.events({
   },
   // ======================= Hypervideo Controll Events ======================//
   'annotation-created subject-composer-area' : function (e, template){
-    console.info(e.originalEvent.path[0]);
     var evt = e.originalEvent.path[0];
+    console.info(evt.annotation);
     var annotation = new Annotation({
-      name: evt.name,
-      type: evt.type,
-      hypervideoId: evt.hypervideoId,
+      name: evt.annotation.name,
+      type: evt.annotation.type,
+      hypervideoId: evt.annotation.hypervideoId,
       owner: Meteor.userId()
-    })
+    });
     annotation.save();
     evt.annotation = annotation.get();
     Template.mainMenu.showValidationErrors(annotation);

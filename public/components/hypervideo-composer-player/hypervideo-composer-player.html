@@ -7,7 +7,7 @@
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 
 <link rel="import" href="../../components/annotations/new-video/new-video-form.html">
-<link rel="import" href="../../components/annotations/annotation-list-item.html">
+<link rel="import" href="../../components/annotations/annotation-data.html">
 
 <dom-module id="hypervideo-composer-player">
   <style is="custom-style">
@@ -277,12 +277,12 @@
                     <!-- Here will be displayed annotation details -->
                     <!-- Change this template question-composer for adapt to the annotation details. -->
                     <ul class="list-inline panel-left">
-                      <template id="annotationList" is="dom-repeat" items="{{annotationNodes}}" as="AnnotationTile">
+                      <template id="annotationList" is="dom-repeat" items="{{annotationNodes}}" as="AnnotationData">
                         <li>
                           <iron-icon class="annotation-list-icon" icon="icons:turned-in"></iron-icon>
                           <paper-button class="toggleDrawer"
                           on-tap="toggleAnnotationDetailDrawer">
-                          <annotation-tile></annotation-tile>
+                          <annotation-data></annotation-data>
                           </paper-button>
                         </li>
                       </template>
@@ -316,6 +316,12 @@
               return [];
           }
         },
+        annotations:{
+          type: Array,
+          value: function() {
+              return [];
+          }
+        },
         annotation:{
           type:Object,
         },
@@ -339,7 +345,7 @@
         this.$.annotationListDrawer.closeDrawer();
         this.$.annotationDetailDrawer.forceNarrow = true;
         this.$.annotationDetailDrawer.closeDrawer();
-        this._getAnnotations(e);
+        this.fire('get-annotations');
       },
 //============================= Public Methods ===============================//
       toggleAnnotationDrawer: function() {
@@ -356,7 +362,6 @@
         this.$.annotationListDrawer.togglePanel();
         this.$.annotationDetailDrawer.closeDrawer();
         this.$.annotationDrawer.closeDrawer();
-        // this._destroyAnnotationList(e);
         this._createAnnotationList(e);
       },
       loadFiles: function(e) {
@@ -372,46 +377,34 @@
       _createAnnotation: function(e) {
         //create annotation on html
         var self = this;
-        self.annotationNodes = [];
         this.toggleAnnotationDetailDrawer();
         var annotationType = Polymer.dom(e).rootTarget.getAttribute('annotation-type');
-        var options = {
-          type: annotationType,
+        self.annotation = {
           hypervideoId: self.hypervideo._id,
           name: "Anotação sem nome",
-        }
-
-        var annotationTile = new Annotation(options);
-        Polymer.dom(self.$.annotationList).appendChild(annotationTile);
-        var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
-        self.annotationNodes = Array.prototype.slice.call(annotationList);
-      },
-      _getAnnotations: function(e){
-        var self = this;
-        self.annotations = [];
+          type: annotationType,
+        };
+        this.fire('annotation-created');
         this.fire('get-annotations');
       },
       _createAnnotationList: function(e){
+        this.fire('get-annotations');
         var self = this;
-        self._getAnnotations();
+        console.info(self.annotations);
+        Polymer.dom(self.$.annotationList).querySelectorAll('annotation-data').forEach(function (el){
+          Polymer.dom(self.$.annotationList).removeChild(el);
+        });
         self.annotations.forEach(function(annotation){
           var options = {
             type: annotation.type,
             hypervideoId: annotation.hypervideoId,
             name: annotation.name,
           }
-          var annotationTile = new Annotation(options);
-          Polymer.dom(self.$.annotationList).appendChild(annotationTile);
+          var annotation = new AnnotationData(options);
+          Polymer.dom(self.$.annotationList).appendChild(annotation);
         });
-        var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
+        var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-data');
         self.annotationNodes = Array.prototype.slice.call(annotationList);
-      },
-      _destroyAnnotationList: function(e){
-        var self = this;
-        var clearList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
-        clearList.forEach(function(annotation){
-          Polymer.dom(self.$.annotationList).removeChild(annotation);
-        });
       },
     });
   </script>
