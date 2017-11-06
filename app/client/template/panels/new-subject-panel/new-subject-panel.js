@@ -66,10 +66,14 @@ Template.newSubjectPanel.events({
     e.target.hypervideos = subject.hypervideos();
   },
   'get-annotations subject-composer-area': function (e, template) {
+    var evt = e.originalEvent.path[0];
     var hypervideo = Hypervideo.findOne({
-      _id: e.target.hypervideo._id
+      _id: evt.hypervideo._id
     });
-    e.target.annotations = hypervideo.annotations();
+    e.target.annotations = hypervideo.annotations(); //update subject-composer-area
+    evt.annotations = hypervideo.annotations(); //update hypervideo-composer-player
+    console.info(e.target);
+    console.info(evt);
   },
   'connection-created subject-composer-area': function (e, template) {
     var id = e.target.subject._id;
@@ -94,9 +98,8 @@ Template.newSubjectPanel.events({
   },
   // ======================= Hypervideo Controll Events ======================//
   'annotation-created subject-composer-area' : function (e, template){
-    console.info("annotation-created subject-composer-area");
     console.info(e.originalEvent.path[0]);
-    var evt = e.originalEvent.path[0]
+    var evt = e.originalEvent.path[0];
     var annotation = new Annotation({
       name: evt.name,
       type: evt.type,

@@ -316,6 +316,9 @@
               return [];
           }
         },
+        annotation:{
+          type:Object,
+        },
         selected:{
           type: String
         },
@@ -328,7 +331,7 @@
           notify: true
         },
       },
-      ready: function() {
+      ready: function(e) {
         this.firstTouch = true;
         this.$.annotationDrawer.forceNarrow = true;
         this.$.annotationDrawer.openDrawer();
@@ -336,6 +339,7 @@
         this.$.annotationListDrawer.closeDrawer();
         this.$.annotationDetailDrawer.forceNarrow = true;
         this.$.annotationDetailDrawer.closeDrawer();
+        this._getAnnotations(e);
       },
 //============================= Public Methods ===============================//
       toggleAnnotationDrawer: function() {
@@ -348,11 +352,12 @@
         this.$.annotationListDrawer.closeDrawer();
         this.$.annotationDrawer.closeDrawer();
       },
-      toggleAnnotationListDrawer: function() {
+      toggleAnnotationListDrawer: function(e) {
         this.$.annotationListDrawer.togglePanel();
         this.$.annotationDetailDrawer.closeDrawer();
         this.$.annotationDrawer.closeDrawer();
-        this._getAnnotations();
+        // this._destroyAnnotationList(e);
+        this._createAnnotationList(e);
       },
       loadFiles: function(e) {
         this.files = e.target.files;
@@ -363,33 +368,51 @@
         this.hypervideo.name = e.target.value;
         this.fire('name-changed');
       },
-      createAnnotation(e){
-
-      },
       //============================= Private Methods ==============================//
       _createAnnotation: function(e) {
         //create annotation on html
         var self = this;
+        self.annotationNodes = [];
         this.toggleAnnotationDetailDrawer();
         var annotationType = Polymer.dom(e).rootTarget.getAttribute('annotation-type');
-        console.info(self);
         var options = {
           type: annotationType,
           hypervideoId: self.hypervideo._id,
           name: "Anotação sem nome",
         }
 
-        var annotationTile = new AnnotationTile(options);
+        var annotationTile = new Annotation(options);
         Polymer.dom(self.$.annotationList).appendChild(annotationTile);
         var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
-        console.info(Polymer.dom(self.$.annotationList));
         self.annotationNodes = Array.prototype.slice.call(annotationList);
       },
       _getAnnotations: function(e){
+        var self = this;
+        self.annotations = [];
         this.fire('get-annotations');
-        console.info(e);
-      }
-
+      },
+      _createAnnotationList: function(e){
+        var self = this;
+        self._getAnnotations();
+        self.annotations.forEach(function(annotation){
+          var options = {
+            type: annotation.type,
+            hypervideoId: annotation.hypervideoId,
+            name: annotation.name,
+          }
+          var annotationTile = new Annotation(options);
+          Polymer.dom(self.$.annotationList).appendChild(annotationTile);
+        });
+        var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
+        self.annotationNodes = Array.prototype.slice.call(annotationList);
+      },
+      _destroyAnnotationList: function(e){
+        var self = this;
+        var clearList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-tile');
+        clearList.forEach(function(annotation){
+          Polymer.dom(self.$.annotationList).removeChild(annotation);
+        });
+      },
     });
   </script>
 </dom-module>

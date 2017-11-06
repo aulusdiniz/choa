@@ -1,10 +1,10 @@
 //This code cleans the database.
 // REMOVE ME - only for tests
-/*
+
 Meteor.startup(function () {
   if (Subject.find().count() !== 0) {
-    Subject.remove({});
-    Hypervideo.remove({});
+    // Subject.remove({});
+    // Hypervideo.remove({});
     Subvideo.remove({});
     Question.remove({});
 
@@ -12,9 +12,10 @@ Meteor.startup(function () {
 
     LibrarySubject.remove({});
     VisitedHypervideo.remove({});
+    Annotations.remove({});
   }
 });
-*/
+
 // Get all Subject content: Hypervideo, subvideos, questions and videos
 // Also get user library referece to this subject, if exists
 // necessery when editing or watching a subject.
