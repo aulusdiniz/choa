@@ -71,6 +71,10 @@ Hypervideo = Astro.Class({
         hypervideoId: this._id
       }).fetch();
     },
+    removeAnnotation: function (annotationId) {
+      var annotation = Annotation.findOne(annotationId);
+      annotation.remove();
+    },
     addConnection: function (conn) {
       if (this._hasConnection(conn) > -1) {
         return false;

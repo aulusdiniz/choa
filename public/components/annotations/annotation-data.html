@@ -4,6 +4,7 @@
   <style media="screen">
   </style>
   <template>
+    <p>{{annotation.name}}: {{annotation._id}}</p>
   </template>
   <script>
     AnnotationData = Polymer({
@@ -58,9 +59,6 @@
         var input = e.target;
         this.annotation.visibility = input.value;
         this.fire('annotation-changed');
-      },
-      annotationDeleted: function () {
-        this.fire('annotation-deleted');
       },
       annotationChanged: function() {
         var self = this;

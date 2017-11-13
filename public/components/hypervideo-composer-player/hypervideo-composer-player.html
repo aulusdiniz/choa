@@ -69,19 +69,6 @@
       height: 100%;
       z-index: 2;
     }
-    #hint-text {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      right: 10px;
-      bottom: 10px;
-      background-color:rgba(220,220,220,0.2);/*var(--light-divider-color);*/
-      color: rgba(200,200,200,1);/*var(--light-divider-color);*/
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      z-index: 0;
-    }
     #hint-text span {
       position: absolute;
       width: 200px;
@@ -108,12 +95,29 @@
       height: 30px;
       line-height: 15px;
     }
-    li {
+    li{
       margin: 5px 0 5px 0;
     }
+    annotation-data{
+      cursor: hand;
+    }
+    .annotation-list{
+      display: inline;
+      text-transform: uppercase;
+    }
     .annotation-list-icon{
-      height:35px;
-      width: 35px;
+      height:25px;
+      width: 25px;
+    }
+    .annotation-list-delete-icon{
+      height:20px;
+      width: 20px;
+      padding: 0 0 0 0;
+      margin: 0 0 0 0;
+      fill:#aaaaaa;
+    }
+    .annotation-list-delete-icon:hover{
+      fill:#ff0000;
     }
   </style>
   <template>
@@ -161,7 +165,7 @@
                 </li>
                 <li>
                   <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                  <paper-button class="toggleDrawer"
+                  <paper-button class="toggleDrawer "
                   on-tap="_createAnnotation"
                   annotation-type="chapter-index"
                   >
@@ -258,12 +262,6 @@
                 <div id="fileInputArea"
                   class="row footer"
                   on-tap="createQuestion">
-                  <div id="hint-text">
-                    <span>
-                      <iron-icon icon="editor:mode-comment"></iron-icon>
-                      Edite as propriedades da sua anotação
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -276,27 +274,17 @@
                   <div class="row content">
                     <!-- Here will be displayed annotation details -->
                     <!-- Change this template question-composer for adapt to the annotation details. -->
-                    <ul class="list-inline panel-left">
-                      <template id="annotationList" is="dom-repeat" items="{{annotationNodes}}" as="AnnotationData">
+                    <ul id="annotationList" class="list-inline panel-left">
+                      <template is="dom-repeat" items="{{annotations}}" as="annotation">
                         <li>
-                          <iron-icon class="annotation-list-icon" icon="icons:turned-in"></iron-icon>
+                          <iron-icon class="annotation-list-delete-icon" on-tap="_annotationDeleted" annotation={{annotation}} icon="delete" ></iron-icon>
                           <paper-button class="toggleDrawer"
                           on-tap="toggleAnnotationDetailDrawer">
-                          <annotation-data></annotation-data>
+                            <annotation-data class="toggleDrawer annotation-list" annotation="{{annotation}}"></annotation-data>
                           </paper-button>
                         </li>
                       </template>
                     </ul>
-                  </div>
-                  <div id="fileInputArea"
-                    class="row footer"
-                    on-tap="">
-                    <div id="hint-text">
-                      <span>
-                        <iron-icon icon="editor:mode-comment"></iron-icon>
-                        Selecione uma anotação para editar as propriedades
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -362,7 +350,7 @@
         this.$.annotationListDrawer.togglePanel();
         this.$.annotationDetailDrawer.closeDrawer();
         this.$.annotationDrawer.closeDrawer();
-        this._createAnnotationList(e);
+        this.fire('get-annotations');
       },
       loadFiles: function(e) {
         this.files = e.target.files;
@@ -381,30 +369,22 @@
         var annotationType = Polymer.dom(e).rootTarget.getAttribute('annotation-type');
         self.annotation = {
           hypervideoId: self.hypervideo._id,
-          name: "Anotação sem nome",
+          name: annotationType,
           type: annotationType,
         };
         this.fire('annotation-created');
         this.fire('get-annotations');
       },
-      _createAnnotationList: function(e){
-        this.fire('get-annotations');
+      _annotationDeleted: function (e) {
         var self = this;
-        console.info(self.annotations);
-        Polymer.dom(self.$.annotationList).querySelectorAll('annotation-data').forEach(function (el){
-          Polymer.dom(self.$.annotationList).removeChild(el);
-        });
-        self.annotations.forEach(function(annotation){
-          var options = {
-            type: annotation.type,
-            hypervideoId: annotation.hypervideoId,
-            name: annotation.name,
-          }
-          var annotation = new AnnotationData(options);
-          Polymer.dom(self.$.annotationList).appendChild(annotation);
-        });
-        var annotationList = Polymer.dom(self.$.annotationList).querySelectorAll('annotation-data');
-        self.annotationNodes = Array.prototype.slice.call(annotationList);
+        var annotation = Polymer.dom(e).rootTarget.annotation;
+        console.info(self.annotation);
+        self.annotation = {
+          _id: annotation._id,
+        };
+        console.info(self.annotation);
+        this.fire('annotation-deleted');
+        this.fire('get-annotations');
       },
     });
   </script>

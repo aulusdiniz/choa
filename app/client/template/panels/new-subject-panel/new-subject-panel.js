@@ -72,8 +72,6 @@ Template.newSubjectPanel.events({
     });
     e.target.annotations = hypervideo.annotations(); //update subject-composer-area
     evt.annotations = hypervideo.annotations(); //update hypervideo-composer-player
-    console.info(e.target);
-    console.info(evt);
   },
   'connection-created subject-composer-area': function (e, template) {
     var id = e.target.subject._id;
@@ -99,7 +97,6 @@ Template.newSubjectPanel.events({
   // ======================= Hypervideo Controll Events ======================//
   'annotation-created subject-composer-area' : function (e, template){
     var evt = e.originalEvent.path[0];
-    console.info(evt.annotation);
     var annotation = new Annotation({
       name: evt.annotation.name,
       type: evt.annotation.type,
@@ -109,6 +106,11 @@ Template.newSubjectPanel.events({
     annotation.save();
     evt.annotation = annotation.get();
     Template.mainMenu.showValidationErrors(annotation);
+  },
+  'annotation-deleted' : function (e, template){
+    var evt = e.originalEvent.path[0];
+    var hypervideo = Hypervideo.findOne(evt.annotation.hypervideoId);
+      hypervideo.removeAnnotation(evt.annotation._id);
   },
   'hypervideo-created subject-composer-area': function (e, template) {
     var hypervideoNode = e.originalEvent.path[0];
