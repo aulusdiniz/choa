@@ -2,6 +2,15 @@
 
 <dom-module id="annotation-data">
   <style media="screen">
+    :host {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    iron-list {
+      flex: 1 1 auto;
+    }
   </style>
   <template>
     <p>{{annotation.name}}: {{annotation._id}}</p>

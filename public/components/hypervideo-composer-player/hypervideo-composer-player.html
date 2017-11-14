@@ -89,35 +89,69 @@
       list-style-position: inside;
     }
     .toggleDrawer {
-      margin: 5px 0 0 10px;
+      margin: 5px 35px 0 10px;
       width: auto;
       font-size: 11px;
       height: 30px;
       line-height: 15px;
     }
+    ul{
+      height: 67vh;
+    }
     li{
       margin: 5px 0 5px 0;
+      overflow: hidden;
     }
-    annotation-data{
-      cursor: hand;
+    #annotationList{
+      overflow: hidden;
+      overflow-y: scroll;
     }
-    .annotation-list{
+    .annotation-item{
       display: inline;
       text-transform: uppercase;
     }
-    .annotation-list-icon{
+    .annotation-item:hover{
+      display: inline;
+      background-color: #FFC107;
+
+    }
+    .add-icon{
       height:25px;
       width: 25px;
     }
-    .annotation-list-delete-icon{
-      height:20px;
-      width: 20px;
+    .delete-icon{
+      height:25px;
+      width: 25px;
       padding: 0 0 0 0;
       margin: 0 0 0 0;
       fill:#aaaaaa;
     }
     .annotation-list-delete-icon:hover{
       fill:#ff0000;
+      cursor: hand;
+    }
+    /* Let's get this party started */
+    ::-webkit-scrollbar {
+        width: 12px;
+        left:-100px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        background: rgba(120,120,120,0.3);
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    }
+    ::-webkit-scrollbar-thumb:window-inactive {
+    	background: rgba(120,120,120,0.4);
     }
   </style>
   <template>
@@ -128,7 +162,7 @@
               <!-- Here will be displayed hipervideo annotations available -->
               <ul class="list-inline panel-left">
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="new-video"
@@ -137,7 +171,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="overlap-video"
@@ -146,7 +180,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="overlap-image"
@@ -155,7 +189,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="text-label"
@@ -164,7 +198,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer "
                   on-tap="_createAnnotation"
                   annotation-type="chapter-index"
@@ -173,7 +207,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="quick-poll"
@@ -182,7 +216,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="link-video"
@@ -191,7 +225,7 @@
                   </paper-button>
                 </li>
                 <li>
-                  <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                  <iron-icon class="add-icon" icon="icons:add-circle"></iron-icon>
                   <paper-button class="toggleDrawer"
                   on-tap="_createAnnotation"
                   annotation-type="subtitle-video"
@@ -218,14 +252,14 @@
           <span class="options">
             <ul class="list-inline left">
               <li>
-                <iron-icon class="annotation-list-icon"
+                <iron-icon class="add-icon"
                 icon="icons:class"></iron-icon>
                 <paper-button class="toggleDrawer"
                 on-tap="toggleAnnotationDrawer">
                 Criar anotação</paper-button>
               </li>
               <li>
-                <iron-icon class="annotation-list-icon"
+                <iron-icon class="add-icon"
                 icon="icons:description"></iron-icon>
                 <paper-button class="toggleDrawer"
                 on-tap="toggleAnnotationListDrawer">
@@ -276,13 +310,15 @@
                     <!-- Change this template question-composer for adapt to the annotation details. -->
                     <ul id="annotationList" class="list-inline panel-left">
                       <template is="dom-repeat" items="{{annotations}}" as="annotation">
-                        <li>
-                          <iron-icon class="annotation-list-delete-icon" on-tap="_annotationDeleted" annotation={{annotation}} icon="delete" ></iron-icon>
-                          <paper-button class="toggleDrawer"
-                          on-tap="toggleAnnotationDetailDrawer">
-                            <annotation-data class="toggleDrawer annotation-list" annotation="{{annotation}}"></annotation-data>
-                          </paper-button>
-                        </li>
+                        <div class="annotation-item">
+                          <li>
+                            <iron-icon class="delete-icon" on-tap="_annotationDeleted" annotation={{annotation}} icon="delete" ></iron-icon>
+                            <paper-button class="toggleDrawer"
+                            on-tap="toggleAnnotationDetailDrawer">
+                              <annotation-data class="toggleDrawer annotation-list" annotation="{{annotation}}"></annotation-data>
+                            </paper-button>
+                          </li>
+                        </div>
                       </template>
                     </ul>
                   </div>
@@ -378,11 +414,9 @@
       _annotationDeleted: function (e) {
         var self = this;
         var annotation = Polymer.dom(e).rootTarget.annotation;
-        console.info(self.annotation);
         self.annotation = {
           _id: annotation._id,
         };
-        console.info(self.annotation);
         this.fire('annotation-deleted');
         this.fire('get-annotations');
       },
