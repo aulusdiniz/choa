@@ -2,6 +2,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="new-video-form">
@@ -32,23 +33,26 @@
       min-height: 80px;
       overflow: hidden;
     }
+    #hypervideoName{
+      width: 200px;
+    }
   </style>
   <template>
-      <div class="row content">
-        Nothing here.
-      </div>
+      <iron-form>
+        <paper-input id="hypervideoName"
+          name="name"
+          label="Rótulo da Anotação"
+          value="{{annotation.name}}"
+          on-change="updateAnnotation">
+        </paper-input>
+      </iron-form>
       <div id="fileInputArea"
-        class="row footer">
+      class="row footer">
         <input id="inputfile"
           type="file" multiple
           accept="video/*"
           on-change="">
         </input>
-        <div id="hint-text">
-          <span>
-            Clique para fazer upload de vídeos
-          </span>
-        </div>
       </div>
   </template>
   <script>
@@ -62,7 +66,8 @@
         observer: "annotationChanged",
       },
     },
-    factoryImpl: function() {
+    factoryImpl: function(payload) {
+      this.annotation = payload;
 
     },
     attached: function() {
