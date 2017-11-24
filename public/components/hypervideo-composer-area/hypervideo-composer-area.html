@@ -245,15 +245,15 @@
         var index = self.fileObjects.indexOf(file);
         this.splice('fileObjects', index, 1);
       },
+      loadFiles: function(e) {
+        this.files = e.target.files;
+        this.fire('upload-videos');
+      },
       toggleVideoDrawer: function() {
         this.$.videoDrawer.togglePanel();
       },
       toggleQuestionDrawer: function() {
         this.$.questionDrawer.togglePanel();
-      },
-      loadFiles: function(e) {
-        this.files = e.target.files;
-        this.fire('upload-videos');
       },
       createQuestion: function() {
 

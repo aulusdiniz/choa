@@ -69,11 +69,26 @@ Hypervideo = Astro.Class({
     annotations:function(){
       return Annotation.find({
         hypervideoId: this._id
-      }).fetch();
+      }).fetch().map(function(annotation){
+        annotation.getVideo();
+        return annotation;
+      });
     },
     removeAnnotation: function (annotationId) {
       var annotation = Annotation.findOne(annotationId);
+      annotation.getVideo();
+      if(annotation.source)annotation.source.remove();
       annotation.remove();
+    },
+    duration: function () {
+      var duration = 0;
+      Annotation.find({
+        hypervideoId: this._id,
+        type:'new-video'
+      }).fetch().forEach(function (annotation){
+        duration += annotation.duration || 0;
+      });
+      return duration;
     },
     addConnection: function (conn) {
       if (this._hasConnection(conn) > -1) {

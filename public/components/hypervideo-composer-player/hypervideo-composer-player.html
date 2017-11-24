@@ -111,7 +111,7 @@
     }
     #annotationList{
       overflow: hidden;
-      overflow-y: scroll;
+      overflow-y: auto;
     }
     .annotation-item{
       display: inline;
@@ -121,20 +121,15 @@
       height:25px;
       width: 25px;
     }
-    .annotation-list-delete-icon{
-      height:20px;
-      width: 20px;
-      padding: 0 0 0 0;
-      margin: 0 0 0 0;
-      fill:#aaaaaa;
+    .delete-icon{
+      color:#aaaaaa;
     }
-    .annotation-list-delete-icon:hover{
-      fill:#ff0000;
-      cursor: hand;
+    .delete-icon:hover{
+      color:#ff0000;
     }
 
     .composer-tabs-contents{
-      margin: 10px 0 0 70px;
+      margin: 10px 20px;
     }
     /* Let's get this party started */
     ::-webkit-scrollbar {
@@ -191,86 +186,69 @@
             <ul class="list-inline panel-left">
               <li>
                 <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="_createAnnotation"
-                annotation-type="new-video"
-                >
-                Adicionar um trecho de video ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="_createAnnotation"
-                annotation-type="overlap-video"
-                >
-                Adicionar um trecho de video em quadro sobre pondo ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="_createAnnotation"
-                annotation-type="overlap-image"
-                >
-                Adicionar uma imagem ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
-                <paper-button class="toggleDrawer"
-                on-tap="_createAnnotation"
-                annotation-type="text-label"
-                >
-                Adicionar Texto sobre ao hipervideo
-                </paper-button>
-              </li>
-              <li>
-                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
                 <paper-button class="toggleDrawer "
                 on-tap="_createAnnotation"
-                annotation-type="chapter-index"
-                >
-                Adicionar indice de capítulos ao hipervideo
+                annotation-type="chapter-index">
+                Capítulo
                 </paper-button>
               </li>
               <li>
                 <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
                 <paper-button class="toggleDrawer"
                 on-tap="_createAnnotation"
-                annotation-type="quick-poll"
-                >
-                Adicionar enquete ou pergunta ao hipervideo
+                annotation-type="new-video">
+                Novo video
                 </paper-button>
               </li>
               <li>
                 <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
                 <paper-button class="toggleDrawer"
                 on-tap="_createAnnotation"
-                annotation-type="link-video"
-                >
-                Adicionar link ao hipervideo
+                annotation-type="overlap-video">
+                Video em quadro
                 </paper-button>
               </li>
               <li>
                 <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
                 <paper-button class="toggleDrawer"
                 on-tap="_createAnnotation"
-                annotation-type="subtitle-video"
-                >
-                Adicionar legenda ao hipervideo
+                annotation-type="overlap-image">
+                Imagem em quadro
+                </paper-button>
+              </li>
+              <li>
+                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                <paper-button class="toggleDrawer"
+                on-tap="_createAnnotation"
+                annotation-type="text-label">
+                Texto
+                </paper-button>
+              </li>
+              <li>
+                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                <paper-button class="toggleDrawer"
+                on-tap="_createAnnotation"
+                annotation-type="link-video">
+                Link
+                </paper-button>
+              </li>
+              <li>
+                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                <paper-button class="toggleDrawer"
+                on-tap="_createAnnotation"
+                annotation-type="quick-poll">
+                Questão
+                </paper-button>
+              </li>
+              <li>
+                <iron-icon class="annotation-list-icon" icon="icons:add-circle"></iron-icon>
+                <paper-button class="toggleDrawer"
+                on-tap="_createAnnotation"
+                annotation-type="subtitle-video">
+                Legenda
                 </paper-button>
               </li>
             </ul>
-          </div>
-          <div id="fileInputArea" class="row footer">
-            <input id="inputfile" type="file" multiple accept="video/*" on-change=""></input>
-            <div id="hint-text">
-              <span>
-                <iron-icon icon="editor:mode-comment"></iron-icon>
-                Vamos lá, adicione uma anotação ao seu hipervideo!
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -283,12 +261,10 @@
               <template is="dom-repeat" items="{{annotations}}" as="annotation">
                 <div class="annotation-item">
                   <li>
-                    <iron-icon class="delete-icon" on-tap="_annotationDeleted" annotation={{annotation}} icon="delete" ></iron-icon>
-                    <div on-tap="showEditAnnotation">
-                      <paper-button class="toggleDrawer">
-                        <annotation-data class="toggleDrawer annotation-list" annotation="{{annotation}}"></annotation-data>
-                      </paper-button>
-                    </div>
+                    <paper-icon-button class="delete-icon" on-tap="_annotationDeleted" icon="delete" ></paper-icon-button>
+                    <paper-button class="toggleDrawer" on-tap="showEditAnnotation">
+                      <annotation-data class="toggleDrawer annotation-list" annotation="{{annotation}}"></annotation-data>
+                    </paper-button>
                   </li>
                 </div>
               </template>
@@ -312,12 +288,6 @@
 //============================= Polymer Methods ==============================//
       is: 'hypervideo-composer-player',
       properties: {
-        annotationNodes:{
-          type: Array,
-          value: function() {
-              return [];
-          }
-        },
         annotations:{
           type: Array,
           value: function() {
@@ -331,17 +301,11 @@
           type: Number,
           value: 0
         },
-        model:{
-          type: Object,
-          value: function() {
-            return{
-              tab1:{content:'foo'},
-              tab2:{content:'bar'}
-            }
-          }
-        },
         form: {
           type: Object,
+        },
+        duration:{
+          type: Number
         },
         hypervideo: {
           type: Object,
@@ -358,6 +322,7 @@
 //============================= Public Methods ===============================//
       showEditAnnotation: function(e) {
         var annotation = Polymer.dom(e).localTarget.annotation;
+        console.log(annotation);
         this.form = this._createAnnotationForm(annotation);
         this.selected = 3;
       },
@@ -366,7 +331,7 @@
       },
       loadFiles: function(e) {
         this.files = e.target.files;
-        this.fire('upload-videos');
+        this.fire('upload-video');
       },
       updateHypervideo: function(e) {
         this.hypervideo.name = e.target.value;
@@ -386,6 +351,7 @@
           'subtitle-video': new subtitleVideoForm(annotation),
         };
         var form = formType[annotationType];
+        form.duration = this.duration;
         if(Polymer.dom(this.$.formPlace).firstChild){
           this._removeAnnotationForm();
         }
@@ -405,15 +371,16 @@
           name: annotationType,
           type: annotationType,
         };
-        this._createAnnotationForm(annotation);
         self.annotation = annotation;
         this.fire('annotation-created');
         this.fire('get-annotations');
+        this._createAnnotationForm(self.annotation);
         self.selected = 3;
       },
       _annotationDeleted: function (e) {
         var self = this;
-        var annotation = Polymer.dom(e).rootTarget.annotation;
+        var annotation = e.model.get('annotation');
+        console.info(e.model);
         self.annotation = {
           _id: annotation._id,
         };

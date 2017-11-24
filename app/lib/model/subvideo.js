@@ -1,8 +1,6 @@
 Subvideos = new Mongo.Collection('subvideos');
 
-VidStore = new FS.Store.GridFS('medias', {
-  path: '~/git/tcc/hypervideos/uploads/medias'
-});
+VidStore = new FS.Store.GridFS('medias');
 Videos = new FS.Collection('videos', {
   stores: [VidStore],
   filter: {

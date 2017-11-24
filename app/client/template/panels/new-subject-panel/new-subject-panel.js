@@ -65,14 +65,6 @@ Template.newSubjectPanel.events({
     });
     e.target.hypervideos = subject.hypervideos();
   },
-  'get-annotations subject-composer-area': function (e, template) {
-    var evt = e.originalEvent.path[0];
-    var hypervideo = Hypervideo.findOne({
-      _id: evt.hypervideo._id
-    });
-    e.target.annotations = hypervideo.annotations(); //update subject-composer-area
-    evt.annotations = hypervideo.annotations(); //update hypervideo-composer-player
-  },
   'connection-created subject-composer-area': function (e, template) {
     var id = e.target.subject._id;
     var subject = Subject.findOne({
@@ -107,10 +99,60 @@ Template.newSubjectPanel.events({
     evt.annotation = annotation.get();
     Template.mainMenu.showValidationErrors(annotation);
   },
+  'get-annotations subject-composer-area': function (e, template) {
+    var evt = e.originalEvent.path[0];
+    var hypervideo = Hypervideo.findOne({
+      _id: evt.hypervideo._id
+    });
+    e.target.annotations = hypervideo.annotations(); //update subject-composer-area
+    evt.annotations = hypervideo.annotations(); //update hypervideo-composer-player
+    evt.duration = hypervideo.duration();
+  },
   'annotation-deleted' : function (e, template){
     var evt = e.originalEvent.path[0];
     var hypervideo = Hypervideo.findOne(evt.annotation.hypervideoId);
-      hypervideo.removeAnnotation(evt.annotation._id);
+    hypervideo.removeAnnotation(evt.annotation._id);
+  },
+  'annotation-updated subject-composer-area' : function (e, template){
+    var evt = e.originalEvent.path[0];
+
+    var annotation = Annotation.findOne(evt.annotation._id);
+    //var keys = ['name', 'time', 'duration', 'size', 'position'];
+    //keys.forEach(function(key){
+    //  annotation.set(key, evt.annotation[key]);
+    //});
+    annotation.set('name', evt.annotation.name);
+    annotation.set('start', evt.annotation.start);
+    annotation.set('duration', evt.annotation.duration);
+    annotation.set('size', evt.annotation.size);
+    annotation.set('position', evt.annotation.position);
+
+    annotation.save();
+    annotation.getVideo();
+    evt.annotation = annotation.get();
+    Template.mainMenu.showValidationErrors(annotation);
+  },
+  'upload-video subject-composer-area': function (e, template) {
+    var composer = e.originalEvent.path[0];
+    var video = Videos.findOne({annotationId: composer.annotation._id});
+    if(video)video.remove(); //cleaning old video to upload a new one.
+    Array.from(composer.files).forEach(function (file) {
+      var tmpfile = new FS.File(file);
+      tmpfile.hypervideoId = composer.annotation.hypervideoId;
+      tmpfile.annotationId = composer.annotation._id;
+      tmpfile.owner = Meteor.userId();
+      Videos.insert(tmpfile, function (err, fileObj) {
+        if (err) {
+          // error handled in collection filters
+        } else {
+          var list = [fileObj];
+          composer.files = list;
+        }
+      });
+    });
+    var annotation = Annotation.findOne({_id: composer.annotation._id});
+    annotation.getVideo();
+    composer.annotation = annotation.get();
   },
   'hypervideo-created subject-composer-area': function (e, template) {
     var hypervideoNode = e.originalEvent.path[0];
@@ -146,7 +188,6 @@ Template.newSubjectPanel.events({
     }
   },
   'upload-videos subject-composer-area': function (e, template) {
-    console.info('calling upload-videos subject-composer-area <-');
     var composer = e.originalEvent.path[0];
     Array.from(composer.files).forEach(function (file) {
       var tmpfile = new FS.File(file);

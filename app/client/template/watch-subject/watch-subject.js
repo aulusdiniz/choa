@@ -57,12 +57,9 @@ Template.watchSubject.events({
     e.target.questions = hypervideo.questions();
   },
   'get-source-subvideo subject-player': function (e, template) {
-    console.info(e);
-    console.info(' <- event passed to get-source-subvideo subject-player');
     var hypervideo = Hypervideo.findOne({
       _id: e.target.hypervideo._id
     });
-
     var subvideo = hypervideo.subvideos()[0];
     e.target.url = subvideo.media().url();
     e.target.subvideo = subvideo.get();

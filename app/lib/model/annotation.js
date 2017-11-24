@@ -14,12 +14,13 @@ Annotation = Astro.Class({
       type: 'string',
       validator: Validators.required(),
     },
-    time:{
-      start:{
-        type: 'number',
-        validator: Validators.required(),
-      },
-      end: 'number'
+    start:{
+      type: 'number',
+      default: 0,
+      validator: Validators.required(),
+    },
+    duration:{
+      type: 'number'
     },
     type:{
       type: 'string',
@@ -33,16 +34,25 @@ Annotation = Astro.Class({
       type: 'string',
       validator: Validators.required(),
     },
-    playSrc:{
-      From:{
-        type: 'string',
-      },
-      To:{
-        type: 'string',
-      },
+    video: 'object',
+    size: 'number',
+    position: 'number'
+  },
+  events: {
+    beforeremove: function () {
+      var video = this.video;
+      if (video) {
+        video.remove();
+      }
     },
+    beforeinit: function () {
+      this.getVideo();
+    }
   },
   methods:{
-
+    getVideo : function(){
+      this.video = Videos.findOne({annotationId: this._id});
+    }
   },
+  behaviors: ['timestamp']
 });
