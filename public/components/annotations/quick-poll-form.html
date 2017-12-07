@@ -38,21 +38,58 @@
     }
   </style>
   <template>
-      <iron-form>
+      <div>
         <paper-input id="hypervideoName"
           name="name"
           label="Rótulo da Anotação"
           value="{{annotation.name}}"
           on-change="updateAnnotation">
         </paper-input>
-      </iron-form>
-      <div id="fileInputArea"
-      class="row footer">
-        <input id="inputfile"
-          type="file" multiple
-          accept="video/*"
-          on-change="">
-        </input>
+
+        <paper-input id="hypervideoName"
+          name="enunciado"
+          label="Enunciado da Questão"
+          value="{{annotation.question}}"
+          on-change="updateAnnotation">
+        </paper-input>
+
+        <paper-input id="hypervideoName"
+          name="right"
+          label="Resposta Certa"
+          value="{{annotation.answerCorrect}}"
+          on-change="updateAnnotation">
+        </paper-input>
+
+        <paper-input id="hypervideoName"
+          name="wrong1"
+          label="Resposta Errada"
+          value="{{annotation.answerWrong1}}"
+          on-change="updateAnnotation">
+        </paper-input>
+        <paper-input id="hypervideoName"
+          name="wrong2"
+          label="Resposta Errada"
+          value="{{annotation.answerWrong2}}"
+          on-change="updateAnnotation">
+        </paper-input>
+        <paper-input id="hypervideoName"
+          name="wrong3"
+          label="Resposta Errada"
+          value="{{annotation.answerWrong3}}"
+          on-change="updateAnnotation">
+        </paper-input>
+        <paper-input id="hypervideoName"
+          name="wrong4"
+          label="Resposta Errada"
+          value="{{annotation.answerWrong4}}"
+          on-change="updateAnnotation">
+        </paper-input>
+        <paper-input id="hypervideoName"
+          name="wrong5"
+          label="Resposta Errada"
+          value="{{annotation.answerWrong5}}"
+          on-change="updateAnnotation">
+        </paper-input>
       </div>
   </template>
   <script>
@@ -69,8 +106,8 @@
       this.annotation = payload;
 
     },
-    attached: function() {
-
+    updateAnnotation: function(){
+      this.fire('annotation-updated');
     },
 //============================= Public Methods ===============================//
   });

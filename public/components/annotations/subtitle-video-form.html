@@ -49,9 +49,9 @@
       <div id="fileInputArea"
       class="row footer">
         <input id="inputfile"
-          type="file" multiple
-          accept="video/*"
-          on-change="">
+          type="file"
+          accept=".srt"
+          value="{{filename::change}}">
         </input>
       </div>
   </template>
@@ -64,13 +64,23 @@
         type: Object,
         value: null,
       },
+      filename: {
+        type : String,
+        observer: "loadFiles"
+      },
+      files:{
+        type: Array
+      },
     },
     factoryImpl: function(payload) {
       this.annotation = payload;
-
     },
-    attached: function() {
-
+    updateAnnotation: function(){
+      this.fire('annotation-updated');
+    },
+    loadFiles: function(filename) {
+      this.files = Array.from(this.$.inputfile.files);
+      this.fire('upload-video');
     },
 //============================= Public Methods ===============================//
   });

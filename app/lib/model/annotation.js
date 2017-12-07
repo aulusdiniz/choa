@@ -34,9 +34,40 @@ Annotation = Astro.Class({
       type: 'string',
       validator: Validators.required(),
     },
-    video: 'object',
-    size: 'number',
-    position: 'number'
+    video:{
+      type: 'object'
+    },
+    size:{
+      type: 'number'
+    },
+    position: {
+      type: 'number'
+    },
+    text:{
+      type: 'string'
+    },
+    link:{
+      type: 'string'
+    },
+    question:{
+      type: 'string'
+    },
+    answerCorrect:{
+      type: 'string'
+    },
+    answerWrong1:{
+      type: 'string'
+    },
+    answerWrong2:{
+      type: 'string'
+    },
+    answerWrong3:{
+      type: 'string'
+    },
+    answerWrong4:{
+      type: 'string'
+    },
+
   },
   events: {
     beforeremove: function () {

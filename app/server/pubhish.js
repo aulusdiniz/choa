@@ -2,18 +2,18 @@
 // REMOVE ME - only for tests
 
 Meteor.startup(function () {
-  if (Subject.find().count() !== 0) {
-    // Subject.remove({});
-    // Hypervideo.remove({});
-    Subvideo.remove({});
-    Question.remove({});
-
-    Videos.remove({}); //not creating
-
-    LibrarySubject.remove({});
-    VisitedHypervideo.remove({});
-    Annotations.remove({});
-  }
+  // if (Subject.find().count() !== 0) {
+  //   Subject.remove({});
+  //   Hypervideo.remove({});
+  //
+  //   Videos.remove({}); //not creating
+  //   Annotations.remove({});
+  //
+  //   LibrarySubject.remove({});
+  //   VisitedHypervideo.remove({});
+  //   Question.remove({});
+  //   Subvideo.remove({});
+  // }
 });
 
 // Get all Subject content: Hypervideo, subvideos, questions and videos

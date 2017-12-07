@@ -38,21 +38,20 @@
     }
   </style>
   <template>
-      <iron-form>
+      <div>
         <paper-input id="hypervideoName"
           name="name"
           label="Rótulo da Anotação"
           value="{{annotation.name}}"
           on-change="updateAnnotation">
         </paper-input>
-      </iron-form>
-      <div id="fileInputArea"
-      class="row footer">
-        <input id="inputfile"
-          type="file" multiple
-          accept="video/*"
-          on-change="">
-        </input>
+
+        <paper-input id="hypervideoName"
+          name="link"
+          label="Hyperlink da Anotação"
+          value="{{annotation.link}}"
+          on-change="updateAnnotation">
+        </paper-input>
       </div>
   </template>
   <script>
@@ -67,10 +66,9 @@
     },
     factoryImpl: function(payload) {
       this.annotation = payload;
-
     },
-    attached: function() {
-
+    updateAnnotation: function(name, start){
+      this.fire('annotation-updated');
     },
 //============================= Public Methods ===============================//
   });

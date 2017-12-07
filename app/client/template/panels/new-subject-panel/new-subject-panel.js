@@ -126,6 +126,14 @@ Template.newSubjectPanel.events({
     annotation.set('duration', evt.annotation.duration);
     annotation.set('size', evt.annotation.size);
     annotation.set('position', evt.annotation.position);
+    annotation.set('text', evt.annotation.text);
+    annotation.set('link', evt.annotation.link);
+    annotation.set('question', evt.annotation.question);
+    annotation.set('answerCorrect', evt.annotation.answerCorrect);
+    annotation.set('answerWrong1', evt.annotation.answerWrong1);
+    annotation.set('answerWrong2', evt.annotation.answerWrong2);
+    annotation.set('answerWrong3', evt.annotation.answerWrong3);
+    annotation.set('answerWrong4', evt.annotation.answerWrong4);
 
     annotation.save();
     annotation.getVideo();
